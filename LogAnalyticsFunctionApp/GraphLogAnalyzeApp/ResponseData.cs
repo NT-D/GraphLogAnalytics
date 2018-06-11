@@ -14,6 +14,18 @@ namespace GraphLogAnalyzeApp
         public class ValueItem
         {
             public string id { get; set; }
+            public ToRecipients[] toRecipients { get; set; }
+
+            public class ToRecipients
+            {
+                public EmailAddress emailAddress { get; set; }
+            }
+
+            public class EmailAddress
+            {
+                public string name { get; set; }
+                public string address { get; set; }
+            }
         }
 
     }

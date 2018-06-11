@@ -13,7 +13,7 @@ namespace GraphLogAnalyzeApp
     {
         public static HttpClient httpClient = new HttpClient();
 
-        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyUkhqVUxkQkpSVTlPellrV2JnUk8taFJDZUFCZHA2ZFliZ0h4TE9xbkkwbmNFM1RJSjNDdFBXUDhOYjR0Y0NJd3ZZQks1VlROT3NSRDZ6M2tzaUtLNUNBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzEwMDk2LCJuYmYiOjE1Mjg3MTAwOTYsImV4cCI6MTUyODcxMzk5NiwiYWlvIjoiWTJkZ1lGajluTUh6dm1TaW5kekZWbTNOSmMyekFRPT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiVXNlci5SZWFkLkFsbCIsIk1haWwuUmVhZCJdLCJzdWIiOiIwOTVmZTBjMS1mYWE2LTQwZjItYWIyZC0wOTIzMjVmN2NmMzYiLCJ0aWQiOiIzZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQiLCJ1dGkiOiJDX1BLOFhSWmEwZWNLc2d1dzRnVUFBIiwidmVyIjoiMS4wIn0.G5osjzgq32P91GYrpojz0ovSo6podAMygEgVxHZm79D5-VYJXkafp8OTEL4lHiOsODHEcIc-5Cj3NUQ4scgbjaKzY-SV1OZetE6D9i48YmPUHQzKRO1X94GmnLmIRg5eXb5RcFU3JMw2FfnNcW9X5W0ZWUZ2A_vRu8Ufp0GLvQ9t4IacIWlflqwxKnhsaae96VOtxBRd6g75Wi8FHSNAK5cJFg5hHSTKChLqdYTQ7Y5hiN_JRmRZoy7ye85E2dNIHVbP-3KNW5nBattFEZW2unce71SqBEPLVInGRuxmP10K3TsK9YvfkeXECtAyQAuE4N0KDD0N5PuCyK1hdsnvQg";
+        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyWXlCVU9wWkd0TkswRXlpakpFZ1pVMGVVQmh1VUdSSGVUYVFZalQweE5uNUZNM2ZkWkJRVlZNSnlCUExqVVlJWmRNMml1c2ZERnZEMVhRRmJZTDh0a3lBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzE0MjkwLCJuYmYiOjE1Mjg3MTQyOTAsImV4cCI6MTUyODcxODE5MCwiYWlvIjoiWTJkZ1lEaXkyY2VtU1BMM2pHY0gvNnpaeThvZkJnQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiVXNlci5SZWFkLkFsbCIsIk1haWwuUmVhZCJdLCJzdWIiOiIwOTVmZTBjMS1mYWE2LTQwZjItYWIyZC0wOTIzMjVmN2NmMzYiLCJ0aWQiOiIzZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQiLCJ1dGkiOiJQS1lRbThrWk9reUpIM3ZYRC04UkFBIiwidmVyIjoiMS4wIn0.ZXZ0eGNN0kW4PjSR-z804StuEjKsOxkMyyTh5Pk6jq9PtBHkBnDr66PPcyE4mVdw-nw1buYr-vE5lWBxMhuc8WV182BKAkL7v8lBN2-x1Z1zBITWQEalylsOfkHTJX0ZhoUrUe0WobF1a6nC6VAoQhAM0vDZd-OpuduwEbPip2rzVV2yWzPRkbZfH5ZZJZf1lp77IsuG2BVeMJ5o6wGtapIo82ExsOH1tVjLu6HDl-NUtNiMCqEfrFSf83XQg8162BOZj9s31Xhiz1fITctUQTKpFOGpcrj4XLP5bDFQTRRhpwMBH7JQovRYyQm6k3TG_uTSQX-eFqBux97EJm_mWw";
         private static string[] ids = new string[] {
             "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
             "d2db6288-7e35-4911-81c4-11b75973e4fc",
@@ -24,7 +24,7 @@ namespace GraphLogAnalyzeApp
             "d5003c5c-677c-4744-8d5d-b45a949a3c5b"};
 
         [FunctionName("Function1")]
-        public static async Task<List<string>> RunOrchestrator(
+        public static async Task<List<ResponseData.ValueItem[]>> RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var outputs = new List<string>();
@@ -34,7 +34,19 @@ namespace GraphLogAnalyzeApp
                 outputs.Add(await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = id, AccessToken = token }));
             }
 
-            return outputs;
+            var outputs2 = new List<ResponseData.ValueItem[]>();
+
+            for (var i = 0; i < outputs.Count; i++)
+            {
+                var messages = await context.CallActivityAsync<ResponseData.ValueItem[]>("GetMessages", new RequestData { UserId = ids[i], AccessToken = token, ConversationHistoryId = outputs[i] });
+                if(messages.Length > 0)
+                {
+                    outputs2.Add(messages);
+                }
+
+            }
+
+            return outputs2;
         }
 
         [FunctionName("GetFolderId")]
@@ -56,6 +68,19 @@ namespace GraphLogAnalyzeApp
                 responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
                 return responseData.Value[0].id;
             }
+        }
+
+        [FunctionName("GetMessages")]
+        public static async Task<ResponseData.ValueItem[]> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
+        {
+            
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", requestData.AccessToken);
+
+            var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
+            response.EnsureSuccessStatusCode();
+            var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
+
+            return responseData.Value;
         }
 
         [FunctionName("Function1_HttpStart")]
