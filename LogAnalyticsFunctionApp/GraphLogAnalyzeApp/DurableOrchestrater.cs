@@ -19,6 +19,7 @@ namespace FunctionApp1
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Tokyo"));
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Seattle"));
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "London"));
+            outputs.Add(await context.CallActivityAsync<string>("FetchAccessToken", "Masa"));
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
             return outputs;
