@@ -11,7 +11,7 @@ namespace GraphLogAnalyzeApp
     {
 
         [JsonProperty("@odata.nextLink")]
-        public string nextLink { get; set; }
+        public string odatanextLink { get; set; }
 
         public ValueItem[] Value { get; set; }
 

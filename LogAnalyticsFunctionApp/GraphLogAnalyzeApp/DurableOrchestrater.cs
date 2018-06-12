@@ -96,34 +96,39 @@ namespace GraphLogAnalyzeApp
         [FunctionName("GetMessages")]
         public static async Task<List<ConversationHistoryTableStorage>> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
-
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                token = await AccessTokenService.FetchToken();
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
-            }
-            response.EnsureSuccessStatusCode();
-            var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
-
             var list = new List<ConversationHistoryTableStorage>();
+            string endpoint = $"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients&$top=2";
 
-            foreach (var data in responseData.Value)
+            ResponseData responseData;
+            do
             {
-                foreach (var to in data.toRecipients)
+
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await httpClient.GetAsync(endpoint);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    var fromAddress = data.from.emailAddress.name;
-                    var toAddress = to.emailAddress.name;
-                    if (fromAddress.Equals(toAddress) == false)
+                    token = await AccessTokenService.FetchToken();
+                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                    response = await httpClient.GetAsync(endpoint);
+                }
+                response.EnsureSuccessStatusCode();
+                responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
+
+                foreach (var data in responseData.Value)
+                {
+                    foreach (var to in data.toRecipients)
                     {
-                        var domain = data.from.emailAddress.address.Split('@')[1];
-                        list.Add(new ConversationHistoryTableStorage { PartitionKey = domain, RowKey = Guid.NewGuid().ToString(), From = fromAddress, To = toAddress });
+                        var fromAddress = data.from.emailAddress.name;
+                        var toAddress = to.emailAddress.name;
+                        if (fromAddress.Equals(toAddress) == false)
+                        {
+                            var domain = data.from.emailAddress.address.Split('@')[1];
+                            list.Add(new ConversationHistoryTableStorage { PartitionKey = domain, RowKey = Guid.NewGuid().ToString(), From = fromAddress, To = toAddress });
+                        }
                     }
                 }
-            }
+            } while (String.IsNullOrEmpty(endpoint = responseData.odatanextLink) == false);
             return list;
         }
 
