@@ -8,7 +8,7 @@ namespace GraphLogAnalyzeApp
 {
     public class RequestData
     {
-        public string AccessToken { get; set; }
+        // public string AccessToken { get; set; }
         public string UserId { get; set; }
         public string ConversationHistoryId { get; set; }
     }

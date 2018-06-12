@@ -48,10 +48,10 @@ namespace GraphLogAnalyzeApp
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var userId = context.GetInput<string>();
-            var folderId  = await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = userId, AccessToken = token });
+            var folderId = await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = userId });
 
-            var messages = await context.CallActivityAsync<List<ConversationHistoryTableStorage>>("GetMessages", new RequestData { UserId = userId, AccessToken = token, ConversationHistoryId = folderId });
-            
+            var messages = await context.CallActivityAsync<List<ConversationHistoryTableStorage>>("GetMessages", new RequestData { UserId = userId, ConversationHistoryId = folderId });
+
             foreach (var value in messages)
             {
                 await context.CallActivityAsync("InsertIntoStorageTable", value);
@@ -61,9 +61,13 @@ namespace GraphLogAnalyzeApp
         [FunctionName("GetFolderId")]
         public static async Task<string> GetFolderId([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", requestData.AccessToken);
-            
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
             var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq 'Conversation History'&$select=id");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                token = await GetNewAccessToken();
+            }
             response.EnsureSuccessStatusCode();
             var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
 
@@ -82,10 +86,14 @@ namespace GraphLogAnalyzeApp
         [FunctionName("GetMessages")]
         public static async Task<List<ConversationHistoryTableStorage>> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
-            
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", requestData.AccessToken);
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                token = await GetNewAccessToken();
+            }
             response.EnsureSuccessStatusCode();
             var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
 
@@ -149,6 +157,12 @@ namespace GraphLogAnalyzeApp
             log.Info($"Started orchestration with ID = '{instanceId}'.");
 
             return starter.CreateCheckStatusResponse(req, instanceId);
+        }
+
+        private static async Task<string> GetNewAccessToken()
+        {
+            await Task.Delay(5);
+            return string.Empty;
         }
     }
 }
