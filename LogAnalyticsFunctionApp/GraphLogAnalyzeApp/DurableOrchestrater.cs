@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GraphLogAnalyszeApp;
+using GraphLogAnalyzeApp.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
@@ -75,7 +76,7 @@ namespace GraphLogAnalyzeApp
                 return responseData.Value[0].id;
             } else
             {
-                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq '‰ï˜b‚Ì—š—ð'&$select=id");
+                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq 'ï¿½ï¿½bï¿½Ì—ï¿½ï¿½ï¿½'&$select=id");
                 response.EnsureSuccessStatusCode();
                 responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
                 return responseData.Value[0].id;
