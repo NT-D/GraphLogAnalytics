@@ -17,8 +17,16 @@ namespace GraphLogAnalyzeApp
     {
         public static HttpClient httpClient = new HttpClient();
 
-        private static string token;
-        private static List<string> ids;
+        private static string token = "<Your token>";
+        private static string[] ids = new string[] {
+            "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
+            "d2db6288-7e35-4911-81c4-11b75973e4fc",
+            "b913cdc6-c8eb-4435-acdd-a5a09093feb1",
+            "586bf31d-74ce-4382-9668-4c99f9626375",
+            "3ad74876-64a0-4707-8e87-361b4c5b97ae",
+            "5a9ebe6d-0a82-418e-b433-1a8596f66b4a",
+            "d5003c5c-677c-4744-8d5d-b45a949a3c5b"
+        };
 
         [FunctionName("Function1")]
         public static async Task RunOrchestrator(
@@ -26,15 +34,15 @@ namespace GraphLogAnalyzeApp
         {
             if (String.IsNullOrEmpty(token)) token = await AccessTokenService.FetchToken();
 
-            if (ids == null)
-            {
-                ids = new List<string>();
-                var users = await UserService.FetchUsers(token);
-                foreach(var user in users.value)
-                {
-                    ids.Add(user.id);
-                }
-            }
+            //if (ids == null)
+            //{
+            //    ids = new List<string>();
+            //    var users = await UserService.FetchUsers(token);
+            //    foreach(var user in users.value)
+            //    {
+            //        ids.Add(user.id);
+            //    }
+            //}
 
             var outputs = new List<string>();
 
