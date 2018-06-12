@@ -19,7 +19,7 @@ namespace GraphLogAnalyzeApp.SubOrchestrators
         public static async Task SubOrchestrator([OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var userId = context.GetInput<string>();
-            var events = await context.CallActivityAsync<List<EventsTable>>("GetEventsRelations", new RequestData({ UserId = userId }));
+            var events = await context.CallActivityAsync<List<EventsTable>>("GetEventsRelations", new RequestData() { UserId = userId });
             await context.CallActivityAsync("InsertEventsRelationnToTable", events);
         }
 
@@ -43,10 +43,10 @@ namespace GraphLogAnalyzeApp.SubOrchestrators
         }
 
         [FunctionName("InsertEventsRelationnToTable")]
-        public static async Task InsertIntoStorageTable([ActivityTrigger] List<EventsTable> conversationHistoryList, [Table("EventsHistory")]CloudTable cloudTable, TraceWriter log)
+        public static async Task InsertEventsRelationnToTable([ActivityTrigger] List<EventsTable> relationsFromEvents, [Table("EventsHistory")]CloudTable cloudTable, TraceWriter log)
         {
             TableBatchOperation tableOperations = new TableBatchOperation();
-            foreach (var conversationHistory in conversationHistoryList)
+            foreach (var conversationHistory in relationsFromEvents)
             {
                 tableOperations.Insert(conversationHistory);
             }
