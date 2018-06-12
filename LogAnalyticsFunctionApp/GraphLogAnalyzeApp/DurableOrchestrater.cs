@@ -10,6 +10,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using GraphLogAnalyzeApp.SubOrchestrators;
 
 namespace GraphLogAnalyzeApp
 {
@@ -24,24 +25,18 @@ namespace GraphLogAnalyzeApp
         public static async Task RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
-
-            //if (ids == null)
-            //{
-            //    ids = new List<string>();
-            //    var users = await UserService.FetchUsers(token);
-            //    foreach(var user in users.value)
-            //    {
-            //        ids.Add(user.id);
-            //    }
-            //}
-
             var ids = await context.CallActivityAsync<List<string>>("GetUsers", null);
 
             var provisioningTasks = new List<Task>();
             foreach (var id in ids)
             {
+                //For Skype
                 Task provisionTask = context.CallSubOrchestratorAsync("SubOrchestrator", id);
                 provisioningTasks.Add(provisionTask);
+
+                //For Calendar
+                Task eventsTask = context.CallSubOrchestratorAsync("CalendarSubOrchestrator", id);
+                provisioningTasks.Add(eventsTask);
             }
 
             await Task.WhenAll(provisioningTasks);
