@@ -16,6 +16,8 @@ namespace GraphLogAnalyzeApp
         {
             var outputs = new List<string>();
 
+            var result = CalendarsService.FetchEvent("ichinomiya@skypehack.onmicrosoft.com", new System.DateTime(2018, 6, 1), new System.DateTime(2018, 6, 15));
+
             // Replace "hello" with the name of your Durable Activity Function.
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Tokyo"));
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Seattle"));
