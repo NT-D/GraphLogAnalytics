@@ -42,6 +42,7 @@ namespace GraphLogAnalyzeApp
         {
             // Function input comes from the request content.
             string instanceId = await starter.StartNewAsync("Function1", null);
+            UserModel userData = await UserService.FetchUsers();
 
             log.Info($"Started orchestration with ID = '{instanceId}'.");
 
