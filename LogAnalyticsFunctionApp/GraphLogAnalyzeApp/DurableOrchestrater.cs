@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GraphLogAnalyszeApp;
+using GraphLogAnalyzeApp.Model;
 using GraphLogAnalyzeApp.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -18,21 +19,11 @@ namespace GraphLogAnalyzeApp
         public static HttpClient httpClient = new HttpClient();
 
         private static string token = "<Your token>";
-        private static string[] ids = new string[] {
-            "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
-            "d2db6288-7e35-4911-81c4-11b75973e4fc",
-            "b913cdc6-c8eb-4435-acdd-a5a09093feb1",
-            "586bf31d-74ce-4382-9668-4c99f9626375",
-            "3ad74876-64a0-4707-8e87-361b4c5b97ae",
-            "5a9ebe6d-0a82-418e-b433-1a8596f66b4a",
-            "d5003c5c-677c-4744-8d5d-b45a949a3c5b"
-        };
 
         [FunctionName("Function1")]
         public static async Task RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
-            if (String.IsNullOrEmpty(token)) token = await AccessTokenService.FetchToken();
 
             //if (ids == null)
             //{
@@ -44,7 +35,7 @@ namespace GraphLogAnalyzeApp
             //    }
             //}
 
-            var outputs = new List<string>();
+            var ids = await context.CallActivityAsync<List<string>>("GetUsers", null);
 
             var provisioningTasks = new List<Task>();
             foreach (var id in ids)
@@ -71,6 +62,19 @@ namespace GraphLogAnalyzeApp
             }
         }
 
+        [FunctionName("GetUsers")]
+        public static async Task<List<String>> GetUsers([ActivityTrigger] DurableActivityContext context, TraceWriter log)
+        {
+            var token = await AccessTokenService.FetchToken();
+            var users = await UserService.FetchUsers(token);
+            var ids = new List<string>();
+            foreach(var user in users.value)
+            {
+                ids.Add(user.id);
+            }
+            return ids;
+        }
+
         [FunctionName("GetFolderId")]
         public static async Task<string> GetFolderId([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
@@ -79,7 +83,9 @@ namespace GraphLogAnalyzeApp
             var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq 'Conversation History'&$select=id");
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                token = await GetNewAccessToken();
+                token = await AccessTokenService.FetchToken();
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq 'Conversation History'&$select=id");
             }
             response.EnsureSuccessStatusCode();
             var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
@@ -90,7 +96,7 @@ namespace GraphLogAnalyzeApp
             }
             else
             {
-                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq '��b�̗���'&$select=id");
+                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq '会話の履歴'&$select=id");
                 response.EnsureSuccessStatusCode();
                 responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
                 return responseData.Value[0].id;
@@ -106,7 +112,9 @@ namespace GraphLogAnalyzeApp
             var response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                token = await GetNewAccessToken();
+                token = await AccessTokenService.FetchToken();
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients");
             }
             response.EnsureSuccessStatusCode();
             var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
