@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using System.Net.Http;
 using GraphLogAnalyzeApp.Model;
 
-namespace GraphLogAnalyzeApp
+namespace GraphLogAnalyzeApp.Services
 {
-    public static class FetchAccessToken
+    public static class AccessTokenService
     {
         private static HttpClient TokenClient = new HttpClient();
 
-        [FunctionName("FetchAccessToken")]
-        public static async Task<string> FetchToken([ActivityTrigger] string name, TraceWriter log)
+        public static async Task<string> FetchToken()
         {
-            log.Info("FetchAccessToken was called");
-
             string clientId = Environment.GetEnvironmentVariable("ClientId");
             string clientSecret = Environment.GetEnvironmentVariable("AppSecret");
             string tenantId = Environment.GetEnvironmentVariable("TenantId");
@@ -38,11 +30,11 @@ namespace GraphLogAnalyzeApp
             if (response.IsSuccessStatusCode)
             {
                 var responseData = await response.Content.ReadAsAsync<TokenResponse>();
-                return $"Access Token is {responseData.access_token}";
+                return responseData.access_token;
             }
             else
             {
-                return $"We can't fetch AccessToken";
+                throw new Exception(response.StatusCode.ToString());
             }
 
         }

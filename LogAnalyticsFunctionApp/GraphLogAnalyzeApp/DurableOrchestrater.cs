@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GraphLogAnalyzeApp.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 
-namespace FunctionApp1
+namespace GraphLogAnalyzeApp
 {
     public static class DurableOrchestrater
     {
@@ -19,15 +20,16 @@ namespace FunctionApp1
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Tokyo"));
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "Seattle"));
             outputs.Add(await context.CallActivityAsync<string>("Function1_Hello", "London"));
-            outputs.Add(await context.CallActivityAsync<string>("FetchAccessToken", "Masa"));
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
             return outputs;
         }
 
         [FunctionName("Function1_Hello")]
-        public static string SayHello([ActivityTrigger] string name, TraceWriter log)
+        public static async Task<string> SayHello([ActivityTrigger] string name, TraceWriter log)
         {
+            var token = await AccessTokenService.FetchToken();
+            log.Info($"My Token is {token}");
             log.Info($"Saying hello to {name}.");
             return $"Hello {name}!";
         }
