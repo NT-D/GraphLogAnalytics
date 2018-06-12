@@ -20,15 +20,18 @@ namespace GraphLogAnalyzeApp
         {
             log.Info("FetchAccessToken was called");
 
-            string clientId = "<Your Client ID>";
-            string clientSecret = "<Your App Secret>";
-            string tokenEndpoint = "https://login.microsoftonline.com/3d145db0-f75b-4f23-a552-78789e7ba92d/oauth2/v2.0/token";
+            string clientId = Environment.GetEnvironmentVariable("ClientId");
+            string clientSecret = Environment.GetEnvironmentVariable("AppSecret");
+            string tenantId = Environment.GetEnvironmentVariable("TenantId");
+            string tokenEndpoint = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
 
-            var requestValues = new List<KeyValuePair<string, string>>();
-            requestValues.Add(new KeyValuePair<string, string>("client_id",clientId));
-            requestValues.Add(new KeyValuePair<string, string>("scope", "https://graph.microsoft.com/.default"));
-            requestValues.Add(new KeyValuePair<string, string>("client_secret",clientSecret));
-            requestValues.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
+            var requestValues = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("scope", "https://graph.microsoft.com/.default"),
+                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("grant_type", "client_credentials")
+            };
             var requestBody = new FormUrlEncodedContent(requestValues);
 
             var response = await TokenClient.PostAsync(tokenEndpoint, requestBody);
