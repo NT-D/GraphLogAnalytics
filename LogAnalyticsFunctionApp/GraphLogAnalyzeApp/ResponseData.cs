@@ -15,6 +15,7 @@ namespace GraphLogAnalyzeApp
         {
             public string id { get; set; }
             public ToRecipients[] toRecipients { get; set; }
+            public ToRecipients from { get; set; }
 
             public class ToRecipients
             {

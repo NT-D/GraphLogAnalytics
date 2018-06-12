@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GraphLogAnalyszeApp;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
 namespace GraphLogAnalyzeApp
@@ -13,7 +16,7 @@ namespace GraphLogAnalyzeApp
     {
         public static HttpClient httpClient = new HttpClient();
 
-        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyWXlCVU9wWkd0TkswRXlpakpFZ1pVMGVVQmh1VUdSSGVUYVFZalQweE5uNUZNM2ZkWkJRVlZNSnlCUExqVVlJWmRNMml1c2ZERnZEMVhRRmJZTDh0a3lBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzE0MjkwLCJuYmYiOjE1Mjg3MTQyOTAsImV4cCI6MTUyODcxODE5MCwiYWlvIjoiWTJkZ1lEaXkyY2VtU1BMM2pHY0gvNnpaeThvZkJnQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiVXNlci5SZWFkLkFsbCIsIk1haWwuUmVhZCJdLCJzdWIiOiIwOTVmZTBjMS1mYWE2LTQwZjItYWIyZC0wOTIzMjVmN2NmMzYiLCJ0aWQiOiIzZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQiLCJ1dGkiOiJQS1lRbThrWk9reUpIM3ZYRC04UkFBIiwidmVyIjoiMS4wIn0.ZXZ0eGNN0kW4PjSR-z804StuEjKsOxkMyyTh5Pk6jq9PtBHkBnDr66PPcyE4mVdw-nw1buYr-vE5lWBxMhuc8WV182BKAkL7v8lBN2-x1Z1zBITWQEalylsOfkHTJX0ZhoUrUe0WobF1a6nC6VAoQhAM0vDZd-OpuduwEbPip2rzVV2yWzPRkbZfH5ZZJZf1lp77IsuG2BVeMJ5o6wGtapIo82ExsOH1tVjLu6HDl-NUtNiMCqEfrFSf83XQg8162BOZj9s31Xhiz1fITctUQTKpFOGpcrj4XLP5bDFQTRRhpwMBH7JQovRYyQm6k3TG_uTSQX-eFqBux97EJm_mWw";
+        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyOE5HMDlvSWw0aFg3XzF2RDJXV3g4S25kRlpiNlRnb0hUZG1xM2ozbTAyWDVoVG5fVE1zbVp0a2FjRHVGTXhTMG80LVdmTi1rd3FBbFZ5RmlLMEJPSnlBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzcwNTExLCJuYmYiOjE1Mjg3NzA1MTEsImV4cCI6MTUyODc3NDQxMSwiYWlvIjoiWTJkZ1lHQzc3WHZEUnlROXFXSFcrWlcvOXF4OEJnQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiVXNlci5SZWFkLkFsbCIsIk1haWwuUmVhZCJdLCJzdWIiOiIwOTVmZTBjMS1mYWE2LTQwZjItYWIyZC0wOTIzMjVmN2NmMzYiLCJ0aWQiOiIzZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQiLCJ1dGkiOiJ1cjZycnhFU0dVdXQxV0xDSDBnWkFBIiwidmVyIjoiMS4wIn0.NuxxknVCfEIr3SZ9yHuDlv3vS8sczZnGjJdhi9CD6XfunZQ9BmxEgPGPg3y-UWn1YFG0tS8dW2m9v6yzYRioF0d6fkH3D3z5-tLSk18f0701Ct7WkrmY6QnBE5S6QlmG_RXzdqv6XomQFmMjpIr66WWnLYabln2CnZzi-6x6N0Hv_-jn_4yDkYTQI815g2JfxjuHXkU6xNyJvjTlaY1eQw-hXdA_y6BqOljF1mfYsgQWTpGYtw6-Cl_JiLmNTxFZTAl-SQlNwc7jGDj5iXuvwD9_Huw7JIH5CYBLBiuCJn2kjuUC7HIlMwm_IhyFPLi9yBc9rp6laNSWfe_jXOyywg";
         private static string[] ids = new string[] {
             "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
             "d2db6288-7e35-4911-81c4-11b75973e4fc",
@@ -24,7 +27,7 @@ namespace GraphLogAnalyzeApp
             "d5003c5c-677c-4744-8d5d-b45a949a3c5b"};
 
         [FunctionName("Function1")]
-        public static async Task<List<ResponseData.ValueItem[]>> RunOrchestrator(
+        public static async Task<List<ConversationHistoryTableStorage>> RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var outputs = new List<string>();
@@ -34,16 +37,21 @@ namespace GraphLogAnalyzeApp
                 outputs.Add(await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = id, AccessToken = token }));
             }
 
-            var outputs2 = new List<ResponseData.ValueItem[]>();
+            var outputs2 = new List<ConversationHistoryTableStorage>();
 
             for (var i = 0; i < outputs.Count; i++)
             {
-                var messages = await context.CallActivityAsync<ResponseData.ValueItem[]>("GetMessages", new RequestData { UserId = ids[i], AccessToken = token, ConversationHistoryId = outputs[i] });
-                if(messages.Length > 0)
+                var messages = await context.CallActivityAsync<List<ConversationHistoryTableStorage>>("GetMessages", new RequestData { UserId = ids[i], AccessToken = token, ConversationHistoryId = outputs[i] });
+                if(messages.Count > 0)
                 {
-                    outputs2.Add(messages);
+                    outputs2.AddRange(messages);
                 }
 
+            }
+
+            foreach (var value in outputs2)
+            {
+                await context.CallActivityAsync("InsertIntoStorageTable", value);
             }
 
             return outputs2;
@@ -71,7 +79,7 @@ namespace GraphLogAnalyzeApp
         }
 
         [FunctionName("GetMessages")]
-        public static async Task<ResponseData.ValueItem[]> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
+        public static async Task<List<ConversationHistoryTableStorage>> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
             
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", requestData.AccessToken);
@@ -80,8 +88,53 @@ namespace GraphLogAnalyzeApp
             response.EnsureSuccessStatusCode();
             var responseData = JsonConvert.DeserializeObject<ResponseData>(await response.Content.ReadAsStringAsync());
 
-            return responseData.Value;
+            var list = new List<ConversationHistoryTableStorage>();
+
+            foreach (var data in responseData.Value)
+            {
+                foreach (var to in data.toRecipients)
+                {
+                    var fromAddress = data.from.emailAddress.name;
+                    var toAddress = to.emailAddress.name;
+                    if (fromAddress.Equals(toAddress) == false)
+                    {
+                        var domain = data.from.emailAddress.address.Split('@')[1];
+                        list.Add(new ConversationHistoryTableStorage { PartitionKey = domain, RowKey = Guid.NewGuid().ToString(), From = fromAddress, To = toAddress });
+                    }
+                }
+            }
+            return list;
         }
+
+        [FunctionName("InsertIntoStorageTable")]
+        [return: Table("ConversationHistory")]
+        public static ConversationHistoryTableStorage InsertIntoStorageTable([ActivityTrigger] ConversationHistoryTableStorage conversationHistory, TraceWriter log)
+        {
+            return conversationHistory;
+        }
+
+        /*
+        [FunctionName("InsertIntoStorageTable")]
+        [return: Table("ConversationHistory")]
+        public static async Task InsertIntoStorageTable([ActivityTrigger] ResponseData.ValueItem[] responseData, CloudTable cloudTable, TraceWriter log)
+        {
+            TableBatchOperation tableOperations = new TableBatchOperation();
+            foreach (var data in responseData)
+            {
+                foreach (var to in data.toRecipients)
+                {
+                    var fromAddress = data.from.emailAddress.address;
+                    var toAddress = to.emailAddress.address;
+                    if (fromAddress.Equals(toAddress) == false)
+                    {
+                        var domain = data.from.emailAddress.address.Split('@')[1];
+                        tableOperations.Insert(new ConversationHistoryTableStorage { PartitionKey = domain, RowKey = Guid.NewGuid().ToString(), From = fromAddress, To = toAddress });
+                    }
+                }
+            }
+            await cloudTable.ExecuteBatchAsync(tableOperations);
+        }
+        */
 
         [FunctionName("Function1_HttpStart")]
         public static async Task<HttpResponseMessage> HttpStart(
