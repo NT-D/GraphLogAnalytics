@@ -16,7 +16,7 @@ namespace GraphLogAnalyzeApp
     {
         public static HttpClient httpClient = new HttpClient();
 
-        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyOE5HMDlvSWw0aFg3XzF2RDJXV3g4S25kRlpiNlRnb0hUZG1xM2ozbTAyWDVoVG5fVE1zbVp0a2FjRHVGTXhTMG80LVdmTi1rd3FBbFZ5RmlLMEJPSnlBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzcwNTExLCJuYmYiOjE1Mjg3NzA1MTEsImV4cCI6MTUyODc3NDQxMSwiYWlvIjoiWTJkZ1lHQzc3WHZEUnlROXFXSFcrWlcvOXF4OEJnQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiVXNlci5SZWFkLkFsbCIsIk1haWwuUmVhZCJdLCJzdWIiOiIwOTVmZTBjMS1mYWE2LTQwZjItYWIyZC0wOTIzMjVmN2NmMzYiLCJ0aWQiOiIzZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQiLCJ1dGkiOiJ1cjZycnhFU0dVdXQxV0xDSDBnWkFBIiwidmVyIjoiMS4wIn0.NuxxknVCfEIr3SZ9yHuDlv3vS8sczZnGjJdhi9CD6XfunZQ9BmxEgPGPg3y-UWn1YFG0tS8dW2m9v6yzYRioF0d6fkH3D3z5-tLSk18f0701Ct7WkrmY6QnBE5S6QlmG_RXzdqv6XomQFmMjpIr66WWnLYabln2CnZzi-6x6N0Hv_-jn_4yDkYTQI815g2JfxjuHXkU6xNyJvjTlaY1eQw-hXdA_y6BqOljF1mfYsgQWTpGYtw6-Cl_JiLmNTxFZTAl-SQlNwc7jGDj5iXuvwD9_Huw7JIH5CYBLBiuCJn2kjuUC7HIlMwm_IhyFPLi9yBc9rp6laNSWfe_jXOyywg";
+        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyWldGVl9rMVpfRmNUZWxpV3h3RGJiNDNWN054UzhzNVN5YjlCS2xjNEJEZy00SDRFQjN0UXZEdVMtYWJETkpDNGRBMkRuWnliUW1ENzdTb2t6d040aVNBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4Nzc0NzgwLCJuYmYiOjE1Mjg3NzQ3ODAsImV4cCI6MTUyODc3ODY4MCwiYWlvIjoiWTJkZ1lKajcyblBXaldtVHJ5am5mWkNOMjVaMkVBQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiQ2FsZW5kYXJzLlJlYWQiLCJVc2VyLlJlYWQuQWxsIiwiTWFpbC5SZWFkIl0sInN1YiI6IjA5NWZlMGMxLWZhYTYtNDBmMi1hYjJkLTA5MjMyNWY3Y2YzNiIsInRpZCI6IjNkMTQ1ZGIwLWY3NWItNGYyMy1hNTUyLTc4Nzg5ZTdiYTkyZCIsInV0aSI6InZvOFF6Y25IWTBPUlRUdGVjWWNZQUEiLCJ2ZXIiOiIxLjAifQ.cunn23bbUqID_MxrCpVk9x4Q9aFOGCGYIRosZ2bU-4SOrPEyXbwCl8Znj6Qdgc8o38Vh6G1yz4Ej2deeFa9dlEnDjqeju35VRXsQlJAkEZVU5Im3JawxjkwajfNggogvZSwNrqn5idCIP_fbgOMZ9eZ3ApY0Rb6Q0hFLv1WO6CciSrDW6mGYDKq1hsqrpRD99gf_Qz0DezudlXOcxaffLZ8EsTtFKxp4WcekEZ4fbOoaSvGmeD_dGUciwpC6JsywR8Nv3fydjmxBi8w65CqISR3DZ5SG3aUA4Bwr7UtH7k04eMwuaeH_SuT66Q06QDh_evbVXwnUwwZrLfc8DyiY-Q";
         private static string[] ids = new string[] {
             "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
             "d2db6288-7e35-4911-81c4-11b75973e4fc",
@@ -27,34 +27,35 @@ namespace GraphLogAnalyzeApp
             "d5003c5c-677c-4744-8d5d-b45a949a3c5b"};
 
         [FunctionName("Function1")]
-        public static async Task<List<ConversationHistoryTableStorage>> RunOrchestrator(
+        public static async Task RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var outputs = new List<string>();
 
+            var provisioningTasks = new List<Task>();
             foreach (var id in ids)
             {
-                outputs.Add(await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = id, AccessToken = token }));
+                Task provisionTask = context.CallSubOrchestratorAsync("SubOrchestrator", id);
+                provisioningTasks.Add(provisionTask);
             }
 
-            var outputs2 = new List<ConversationHistoryTableStorage>();
+            await Task.WhenAll(provisioningTasks);
 
-            for (var i = 0; i < outputs.Count; i++)
-            {
-                var messages = await context.CallActivityAsync<List<ConversationHistoryTableStorage>>("GetMessages", new RequestData { UserId = ids[i], AccessToken = token, ConversationHistoryId = outputs[i] });
-                if(messages.Count > 0)
-                {
-                    outputs2.AddRange(messages);
-                }
+        }
 
-            }
+        [FunctionName("SubOrchestrator")]
+        public static async Task SubOrchestrator(
+            [OrchestrationTrigger] DurableOrchestrationContext context)
+        {
+            var userId = context.GetInput<string>();
+            var folderId  = await context.CallActivityAsync<string>("GetFolderId", new RequestData { UserId = userId, AccessToken = token });
 
-            foreach (var value in outputs2)
+            var messages = await context.CallActivityAsync<List<ConversationHistoryTableStorage>>("GetMessages", new RequestData { UserId = userId, AccessToken = token, ConversationHistoryId = folderId });
+            
+            foreach (var value in messages)
             {
                 await context.CallActivityAsync("InsertIntoStorageTable", value);
             }
-
-            return outputs2;
         }
 
         [FunctionName("GetFolderId")]
