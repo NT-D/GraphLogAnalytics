@@ -25,17 +25,6 @@ namespace GraphLogAnalyzeApp
         public static async Task RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
-
-            //if (ids == null)
-            //{
-            //    ids = new List<string>();
-            //    var users = await UserService.FetchUsers(token);
-            //    foreach(var user in users.value)
-            //    {
-            //        ids.Add(user.id);
-            //    }
-            //}
-
             var ids = await context.CallActivityAsync<List<string>>("GetUsers", null);
 
             var provisioningTasks = new List<Task>();
