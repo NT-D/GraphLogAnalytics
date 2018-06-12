@@ -97,7 +97,7 @@ namespace GraphLogAnalyzeApp
         public static async Task<List<ConversationHistoryTableStorage>> GetMessages([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
             var list = new List<ConversationHistoryTableStorage>();
-            string endpoint = $"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients&$top=2";
+            string endpoint = $"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders/{requestData.ConversationHistoryId}/messages?$select=id,body,sender,from,toRecipients";
 
             ResponseData responseData;
             do
