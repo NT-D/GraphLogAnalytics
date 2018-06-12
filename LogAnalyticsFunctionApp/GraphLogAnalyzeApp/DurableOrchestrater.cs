@@ -66,12 +66,7 @@ namespace GraphLogAnalyzeApp
         public static async Task<List<String>> GetUsers([ActivityTrigger] DurableActivityContext context, TraceWriter log)
         {
             var token = await AccessTokenService.FetchToken();
-            var users = await UserService.FetchUsers(token);
-            var ids = new List<string>();
-            foreach(var user in users.value)
-            {
-                ids.Add(user.id);
-            }
+            var ids = await UserService.FetchUsers(token);
             return ids;
         }
 
