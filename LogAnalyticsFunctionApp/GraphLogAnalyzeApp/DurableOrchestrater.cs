@@ -17,20 +17,25 @@ namespace GraphLogAnalyzeApp
     {
         public static HttpClient httpClient = new HttpClient();
 
-        private static string token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkFRQUJBQUFBQUFEWDhHQ2k2SnM2U0s4MlRzRDJQYjdyU2pEUDEwRDBfT1dnbW9yaU0tNVplV3Q4YXRCWWpuaDN5OVdySHlzQ0tBNml2X3RlSUI0S3JOREdBMEtGN1p0Szd1NW04Qy1BZ3R5dGI3TFFqU3VWQ1NBQSIsImFsZyI6IlJTMjU2IiwieDV0IjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIiwia2lkIjoiaUJqTDFSY3F6aGl5NGZweEl4ZFpxb2hNMllrIn0.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwiaWF0IjoxNTI4NzgwNzMyLCJuYmYiOjE1Mjg3ODA3MzIsImV4cCI6MTUyODc4NDYzMiwiYWlvIjoiWTJkZ1lKaDd5MHgvSC84MHhibjMyUjF1YlBXSUJRQT0iLCJhcHBfZGlzcGxheW5hbWUiOiJTa3lwZUdyYXBoQW5hbHl0aWNzIiwiYXBwaWQiOiJiZTg0MmI4NC1kM2E5LTQ4ZjktYjcyZS1lYTUwMDM3NTYzNjkiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zZDE0NWRiMC1mNzViLTRmMjMtYTU1Mi03ODc4OWU3YmE5MmQvIiwib2lkIjoiMDk1ZmUwYzEtZmFhNi00MGYyLWFiMmQtMDkyMzI1ZjdjZjM2Iiwicm9sZXMiOlsiQ2FsZW5kYXJzLlJlYWQiLCJVc2VyLlJlYWQuQWxsIiwiTWFpbC5SZWFkIl0sInN1YiI6IjA5NWZlMGMxLWZhYTYtNDBmMi1hYjJkLTA5MjMyNWY3Y2YzNiIsInRpZCI6IjNkMTQ1ZGIwLWY3NWItNGYyMy1hNTUyLTc4Nzg5ZTdiYTkyZCIsInV0aSI6IllPUlpKN0tXRTA2bVJkSEkta2thQUEiLCJ2ZXIiOiIxLjAifQ.Bwgsbjpw88zpGKpHz_zILHqfhvAVCbVD1bJdfslOSu0mCbm8HxWMyb1mF7hX7st0db4ElFXt94peMSWv20GXSVMVdzrJZyBef2g209uCTHJUpFa6QTb8D78gtDTThk013WQZQcAwi0gFmOy2QjoQmOTMaaqtJzBwsaLU1G-Te-nannecuhSQ5Ku2rI5vbC6bm6dFsecPKRx6OowHqRGhXwEqtAgAiewPmOnFQVJk1aQh_zi95GprSyM5T9bgO3R6pIzVnkkKbSmKpDvN6wnQIlzIsdYbjawqy7DlmNlhQy3M1oZdPxMBP1dlnsagBNB43JdSRxLK5B68SpDByJcamw";
-        private static string[] ids = new string[] {
-            "d25f0cb2-c1a5-48b2-b1a1-0db2ccf37e03",
-            "d2db6288-7e35-4911-81c4-11b75973e4fc",
-            "b913cdc6-c8eb-4435-acdd-a5a09093feb1",
-            "586bf31d-74ce-4382-9668-4c99f9626375",
-            "3ad74876-64a0-4707-8e87-361b4c5b97ae",
-            "5a9ebe6d-0a82-418e-b433-1a8596f66b4a",
-            "d5003c5c-677c-4744-8d5d-b45a949a3c5b"};
+        private static string token;
+        private static List<string> ids;
 
         [FunctionName("Function1")]
         public static async Task RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
+            if (String.IsNullOrEmpty(token)) token = await AccessTokenService.FetchToken();
+
+            if (ids == null)
+            {
+                ids = new List<string>();
+                var users = await UserService.FetchUsers(token);
+                foreach(var user in users.value)
+                {
+                    ids.Add(user.id);
+                }
+            }
+
             var outputs = new List<string>();
 
             var provisioningTasks = new List<Task>();
@@ -74,7 +79,8 @@ namespace GraphLogAnalyzeApp
             if (responseData.Value.Length == 1)
             {
                 return responseData.Value[0].id;
-            } else
+            }
+            else
             {
                 response = await httpClient.GetAsync($"https://graph.microsoft.com/v1.0/users/{requestData.UserId}/mailFolders?$filter=displayName eq '��b�̗���'&$select=id");
                 response.EnsureSuccessStatusCode();
@@ -134,7 +140,6 @@ namespace GraphLogAnalyzeApp
         {
             // Function input comes from the request content.
             string instanceId = await starter.StartNewAsync("Function1", null);
-            UserModel userData = await UserService.FetchUsers();
 
             log.Info($"Started orchestration with ID = '{instanceId}'.");
 
