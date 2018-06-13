@@ -26,11 +26,19 @@ namespace GraphLogAnalyzeApp.SubOrchestrators
         [FunctionName("GetEventsRelations")]
         public static async Task<List<EventsTable>> GetRelationShipFromEvents([ActivityTrigger] RequestData requestData, TraceWriter log)
         {
-            //TODO: Call Calendar service to fetch events with requestData.userId
+            List<Microsoft.Graph.Event> events = await Services.CalendarService.FetchEvents(requestData.UserId, DateTime.Now.AddDays(-6), DateTime.Now.AddDays(1));
 
             var eventsList = new List<EventsTable>();
-            //TODO; Change data scheme from Microsoft.Graph.Events to Events Table
-            eventsList.Add(new EventsTable { PartitionKey = "test.com", RowKey = Guid.NewGuid().ToString(), From = "test from", To = "test to" });
+            string from;
+            foreach (var evt in events)
+            {
+                from = evt.Organizer.EmailAddress.Name;
+                foreach(var attendee in evt.Attendees)
+                {
+                    eventsList.Add(new EventsTable { From = from, To = attendee.EmailAddress.Name });
+                }
+            }
+
             return eventsList;
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,9 @@ namespace GraphLogAnalyzeApp
 {
     public class ResponseData
     {
+
+        [JsonProperty("@odata.nextLink")]
+        public string odatanextLink { get; set; }
 
         public ValueItem[] Value { get; set; }
 

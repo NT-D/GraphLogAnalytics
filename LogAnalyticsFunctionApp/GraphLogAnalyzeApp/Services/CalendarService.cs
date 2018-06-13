@@ -10,7 +10,7 @@ namespace GraphLogAnalyzeApp.Services
     {
         private static HttpClient Client = new HttpClient();
 
-        public static async Task<List<Microsoft.Graph.Event>> FetchEvent(string userId, DateTime startDateTime, DateTime endDateTime)
+        public static async Task<List<Microsoft.Graph.Event>> FetchEvents(string userId, DateTime startDateTime, DateTime endDateTime)
         {
             /* for test
             int pageSize = 2;
