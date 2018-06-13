@@ -9,6 +9,7 @@ namespace GenerateTestData
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            //var token = AccessTokenService.FetchToken();//It doens't work now.
         }
 
         private static async Task FetchAllUsers()
